@@ -137,6 +137,15 @@ io.on('connection', function(socket){
   socket.on('connected', function(msg){
     console.log('user connected: ' + msg);
   });
+
+  socket.on('requpdate', function(data){
+    console.log(p1+" and "+p2+" have started a new game");
+    activegames.find({p1:p1}, function (err, docs){
+      console.log(JSON.stringify(docs));
+      socket.emit('updategame', p1+"||"+p2);
+    });
+  });
+
   socket.on('newgame', function(msg){
     console.log("rolz   "+msg);
     var newgamedata = {user: msg, time: getDateTime(), true: 'true'};
@@ -151,6 +160,18 @@ io.on('connection', function(socket){
         gamereqs.remove({ true: 'true' }, { multi: true }, function (err, numRemoved) {
           console.log(numRemoved+" players removed from queue into battle");
         });
+        var startgamedata = {p1: p1, p2: p2, p1avatar: "default", p2avatar: "default", p1stats: "1000 TROPHIES", p2stats: "1500 TROPHIES", time: getDateTime(), true: true};
+        activegames.insert(startgamedata, function (err, newDoc){
+          if(!err){
+            console.log(p1+" and "+p2+" have started a new game");
+            activegames.find({p1:p1}, function (err, docs){// find one???
+              console.log(JSON.stringify(docs));
+              //var docsarr = docs.substring(3, docs.length-3).split("":"');
+              var curtime = new Date();
+              io.emit('startgame', p1+"||"+p2+"||"+"kaori"+"||"+"therock"+"||"+"aim"+"||"+(new Date(curtime.getFullYear,)));
+            });
+          }
+        })
       }else{
         gamereqs.insert(newgamedata, function (err, newDoc){
           if(!err){
