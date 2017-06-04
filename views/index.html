@@ -1,0 +1,121 @@
+<html class="mdc-typography">
+  <head>
+    <title>ez!BANG!</title>
+    <link rel="stylesheet" href="/material-components-web.css"/>
+  </head>
+  <body class="bgmain">
+    <div class="center-div"><img src="/RolzProLogo2.svg" alt="RolzPro.com Logo v1, (c) 2017 RolzPro.com" class="center-logo"/></div>
+    <div class="mdc-card getcard center-div">
+      <section class="mdc-card__primary">
+        <div data-mdc-auto-init="MDCTextfield" class="mdc-textfield">
+          <input id="getid" type="text" name="username" class="mdc-textfield__input setnamebox"/>
+          <label for="getid" class="mdc-textfield__label">Username</label>
+        </div>
+        <br>
+        <button data-mdc-auto-init="MDCRipple" class="mdc-button mdc-button mdc-button--accent mdc-button--raised mdc-ripple-surface startgame">Join New Game</button><br/><br/>
+        <divc class="mdc-typography--title infotext">Hi, undefined!   Welcome to the new and improved RolzPro.com! Click on the menu to see more, and check out the info section if its your first time here. To view your current RolzPro XP, check out the XP section in the menu!</divc>
+      </section>
+    </div>
+    <div class="mdc-card getcard center-div">
+      <section class="mdc-card__primary">
+        <divc class="gamebox">
+          <canvas id="gamecanvas" width="500" height="500" style="border:1px solid #000000;"></canvas>
+        </divc>
+      </section>
+    </div>
+  </body>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script>
+  $(function () {
+    var socket = io();
+    var user = "";//"no user set yet";
+    var direction;//="none";
+    var color ="";
+    var game;
+    var clearer;
+
+    var positions = {users:{}, autos:{}};
+    var length=0;
+
+    var canvas = document.getElementById("gamecanvas");
+    var ctx = canvas.getContext("2d");
+
+    socket.emit('clientconnect');
+    socket.on('clientinfo', function(msg){
+      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!');
+    });
+
+    $('.startgame').click(function(){
+      $('.infotext').text('');
+      $('.startgame').text('Restart Game');
+      $('.gamebox').focus();
+      socket.emit('newgame', ["rolz", $('.setnamebox').val()]);
+      return false;
+    });
+    socket.on('startgame', function (msg){
+      $('.infotext').text('');
+      user= msg[0]["username"];
+      direction="none";
+      color="ff0000";
+      ctx.font = "15px Arial";
+      game=setInterval(function(){ rungame() }, 50);
+    });
+
+    socket.on('update', function (msg){
+      var tempuser= msg[0]["username"];
+      var tempxpos= msg[0]["xpos"];
+      var tempypos= msg[0]["ypos"];
+      var tempcolor="ff0000";
+      if(positions.users[tempuser]==undefined)
+      {
+        positions.users[tempuser] = {x:tempxpos, y:tempypos};
+      }
+      ctx.clearRect(9*positions.users[tempuser]['x']-1,9*positions.users[tempuser]['y']-1,52,52);
+      ctx.fillStyle = "#"+tempcolor;
+      ctx.fillRect(9*tempxpos,9*tempypos,50,50);
+      //ctx.fillStyle = "#"+"000000";
+      //ctx.fillText(tempuser,9*tempxpos,9*tempypos);
+      positions.users[tempuser] = {x:tempxpos, y:tempypos};
+    });
+
+    function rungame(){
+      $(document).keydown(function(e) {
+        if(e.which == 87) {
+          direction="S";
+        }else if(e.which == 68) {
+          direction="E";
+        } else if(e.which == 83) {
+          direction="N";
+        }else if(e.which == 65) {
+          direction="W";
+        }
+      });
+      $(document).keyup(function(e) {
+        if(e.which == 87 && direction=="S") {
+          direction="";
+        }else if(e.which == 68 && direction=="E") {
+          direction="";
+        } else if(e.which == 83 && direction=="N") {
+          direction="";
+        }else if(e.which == 65 && direction=="W") {
+          direction="";
+        }
+      });
+      $(document).keypress(function(e) {
+        if(e.which == 32) {
+          direction="C";
+        }
+      });
+      socket.emit('requpdate', [direction, user]);
+    }
+
+    function cleargamebox(){
+
+    }
+
+  });
+  
+
+  </script>
+</html>
