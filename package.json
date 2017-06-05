@@ -13,14 +13,9 @@
   "author": "Charlie Wu, RolzPro.com",
   "license": "Apache 2.0",
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "cookie-parser": "^1.4.3",
-    "crypto-js": "^3.1.9-1",
     "express": "^4.15.2",
     "material-components-web": "^0.9.1",
     "nedb": "^1.8.0",
-    "node-gyp": "^3.6.1",
-    "pug": "^2.0.0-rc.1",
     "socket.io": "^2.0.1"
   }
 }

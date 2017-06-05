@@ -3,20 +3,13 @@
 
 var express = require('express')
 var app = express()
-var bodyParser = require('body-parser');
 var fs = require('fs');
-var cookieParser = require('cookie-parser')
-var SHA512 = require("crypto-js/sha512");
 
 var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
-app.use(bodyParser.urlencoded({ extended: true })); 
-//app.set('view engine', 'pug')
-
 app.use(express.static('./views'));
-app.use(cookieParser());
 
 var Datastore = require('nedb');
 gamedb = new Datastore({ filename: 'database/gamedb', autoload: true });
