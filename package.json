@@ -1,11 +1,11 @@
 {
-  "name": "pool-tourney",
+  "name": "ezb-game",
   "version": "0.0.1",
   "engines": {
     "node": "6.10.0",
     "npm": "3.10.10"
   },
-  "description": "pool tournament planner",
+  "description": "fun web multiplayer minigame",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"

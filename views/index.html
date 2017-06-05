@@ -43,7 +43,7 @@
 
     socket.emit('clientconnect');
     socket.on('clientinfo', function(msg){
-      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!');
+      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!   To play, move around your character with WASD and shoot blobs with arrow keys. You may only shoot one blob at a time. Have Fun! (If nothing happens when you press start, pick another username. sorry by errors arent implemented yet lmao)');
     });
 
     $('.startgame').click(function(){
@@ -66,7 +66,7 @@
       var tempuser= msg[0]["username"];
       var tempxpos= msg[0]["xpos"];
       var tempypos= msg[0]["ypos"];
-      var tempcolor="ff0000";
+      var tempcolor=msg[0]['color'];
       if(positions.users[tempuser]==undefined)
       {
         positions.users[tempuser] = {x:tempxpos, y:tempypos};
@@ -89,6 +89,14 @@
           direction="N";
         }else if(e.which == 65) {
           direction="W";
+        }else if(e.which == 38) {
+          direction="UP";
+        }else if(e.which == 37) {
+          direction="LEFT";
+        }else if(e.which == 39) {
+          direction="RIGHT";
+        }else if(e.which == 40) {
+          direction="DOWN";
         }
       });
       $(document).keyup(function(e) {
@@ -100,11 +108,14 @@
           direction="";
         }else if(e.which == 65 && direction=="W") {
           direction="";
-        }
-      });
-      $(document).keypress(function(e) {
-        if(e.which == 32) {
-          direction="C";
+        }else if(e.which == 38 && direction=="UP") {
+          direction="";
+        }else if(e.which == 37 && direction=="LEFT") {
+          direction="";
+        } else if(e.which == 39 && direction=="RIGHT") {
+          direction="";
+        }else if(e.which == 40 && direction=="DOWN") {
+          direction="";
         }
       });
       socket.emit('requpdate', [direction, user]);
