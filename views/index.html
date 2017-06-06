@@ -43,7 +43,7 @@
 
     socket.emit('clientconnect');
     socket.on('clientinfo', function(msg){
-      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!   To play, move around your character with WASD and shoot blobs with arrow keys. You may only shoot one blob at a time. Have Fun! (If nothing happens when you press start, pick another username. sorry by errors arent implemented yet lmao)');
+      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!   To play, move around your character with WASD and shoot blobs with arrow keys. You may only shoot one blob at a time. Have Fun! (If nothing happens when you press start, pick another username. sorry by errors arent implemented yet lmao) TO COUNT AS A KILL YOU MUST COMPLETELY COVER THE BODY OF THE OTHER PERSON WITH YOUR MISSILE');
     });
 
     $('.startgame').click(function(){
