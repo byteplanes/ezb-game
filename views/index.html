@@ -61,7 +61,9 @@
       ctx.font = "15px Arial";
       game=setInterval(function(){ rungame() }, 50);
     });
-
+    socket.on('uhoh', function (msg){
+      $('.infotext').text(msg);
+    });
     socket.on('update', function (msg){
       var tempuser= msg[0]["username"];
       var tempxpos= msg[0]["xpos"];

@@ -164,11 +164,11 @@ io.on('connection', function(socket){
           xchange=-1;
         }else{
         }
-        if((docs[0]['xpos']>=49&&xchange>0)||(docs[0]['xpos']<=1&&xchange<0))
+        if((docs[0]['xpos']>=50&&xchange>0)||(docs[0]['xpos']<=0&&xchange<0))
         {
           xchange=0;
         }
-        if((docs[0]['ypos']>=49&&ychange>0)||(docs[0]['ypos']<=1&&ychange<0))
+        if((docs[0]['ypos']>=50&&ychange>0)||(docs[0]['ypos']<=0&&ychange<0))
         {
           ychange=0;
         }
@@ -182,6 +182,19 @@ io.on('connection', function(socket){
             })
           }
         })
+        missiledb.find({username:docs[0]['username']}, function (err, mdoc){
+          if(!err){
+            if(mdoc[0]!=undefined){
+              //console.log(mdoc[0]);
+              gamedb.find({xpos:mdoc[0]['xpos'], ypos:mdoc[0]['ypos']}, function (err, gdoc){
+                if(!err&&gdoc[0]!=undefined&&(gdoc[0]['username']!=mdoc[0]['username'])){
+                    console.log('COLLISION: '+gdoc[0]['username']+" and "+mdoc[0]['username']);
+                    io.emit('uhoh',gdoc[0]['username']+" WAS KILLED BY "+mdoc[0]['username'])
+                }
+              });
+            }
+          }
+        });
       }else{
         socket.emit('uhoh', 'SOMETHING WENT WRONG WITH YOUR REQUEST YOUR USERNAME IS MESSED UP SRY');
       }
