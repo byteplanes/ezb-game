@@ -42,8 +42,16 @@
     var ctx = canvas.getContext("2d");
 
     socket.emit('clientconnect');
+
+    window.onbeforeunload = confirmExit;
+    function confirmExit()
+    {
+      socket.emit('quit', user);
+      //return "Are you sure you would like to quit EZB-Game? Your game will not be saved.";
+    }
+
     socket.on('clientinfo', function(msg){
-      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!   To play, move around your character with WASD and shoot blobs with arrow keys. You may only shoot one blob at a time. Have Fun! (If nothing happens when you press start, pick another username. sorry by errors arent implemented yet lmao) TO COUNT AS A KILL YOU MUST COMPLETELY COVER THE BODY OF THE OTHER PERSON WITH YOUR MISSILE');
+      $('.infotext').text('Welcome, there are '+msg+' users in the game right now!   To play, move around your character with WASD and shoot blobs with arrow keys. To kill another player, hit then with your green blob. Have Fun!');
     });
 
     $('.startgame').click(function(){
@@ -65,7 +73,19 @@
       $('.infotext').text(msg);
     });
     socket.on('update', function (msg){
-      var tempuser= msg[0]["username"];
+      ctx.clearRect(0,0,500,500);
+      for(var i = 0; i < msg.length; i++){
+        var tempuser= msg[i]["username"];
+        var tempxpos= msg[i]["xpos"];
+        var tempypos= msg[i]["ypos"];
+        var tempcolor=msg[i]['color'];
+        if(tempuser==user&&msg[i]['type']=="player"){
+          tempcolor="db3030";
+        }
+        ctx.fillStyle = "#"+tempcolor;
+        ctx.fillRect(9*tempxpos,9*tempypos,50,50);
+      }
+      /*var tempuser= msg[0]["username"];
       var tempxpos= msg[0]["xpos"];
       var tempypos= msg[0]["ypos"];
       var tempcolor=msg[0]['color'];
@@ -78,7 +98,7 @@
       ctx.fillRect(9*tempxpos,9*tempypos,50,50);
       //ctx.fillStyle = "#"+"000000";
       //ctx.fillText(tempuser,9*tempxpos,9*tempypos);
-      positions.users[tempuser] = {x:tempxpos, y:tempypos};
+      positions.users[tempuser] = {x:tempxpos, y:tempypos};*/
     });
 
     function rungame(){
