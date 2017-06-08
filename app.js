@@ -45,7 +45,7 @@ io.on('connection', function(socket){
   });
   socket.on('quit', function(msg){
     gamedb.remove({username:msg}, function(err, numRemoved){
-      if(!err){
+      if(!err&&numRemoved>0){
         console.log(msg+" successfully removed! "+numRemoved);
         activeusersnum--;
       }
