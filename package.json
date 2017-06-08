@@ -16,6 +16,7 @@
     "express": "^4.15.2",
     "material-components-web": "^0.9.1",
     "nedb": "^1.8.0",
+    "randomstring": "^1.1.5",
     "socket.io": "^2.0.1"
   }
 }
