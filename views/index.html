@@ -40,6 +40,10 @@
     var canvas = document.getElementById("gamecanvas");
     var ctx = canvas.getContext("2d");
     
+    var setping = setInterval(function(){getping()}, 750);
+
+    var ping = 0;
+
     socket.emit('clientconnect');
 
     window.onbeforeunload = confirmExit;
@@ -48,6 +52,11 @@
       socket.emit('quit', user);
       //return "Are you sure you would like to quit EZB-Game? Your game will not be saved.";
     }
+
+    socket.on('setping', function(msg){
+      ping = msg;
+      console.log(ping);    
+    });
 
     socket.on('clientinfo', function(msg){
       $('.infotext').text('Welcome, there are '+msg+' users in the game right now!   To play, move around your character with WASD and shoot blobs with arrow keys. To kill another player, hit then with your green blob. Have Fun!');
@@ -74,7 +83,7 @@
       $('.infotext').text(msg);
     });
     socket.on('update', function (msg){
-      //$('.infotext').text(scalex);
+      //$('.infotext').text(ping);
       ctx.clearRect(0,0,500*scalex,500*scalex);
       for(var i = 0; i < msg.length; i++){
         var tempuser= msg[i]["username"];
@@ -145,8 +154,8 @@
       socket.emit('requpdate', [direction, user]);
     }
 
-    function cleargamebox(){
-
+    function getping(){
+      socket.emit('getping', (new Date).getTime());
     }
 
   });

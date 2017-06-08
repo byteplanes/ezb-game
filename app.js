@@ -9,6 +9,10 @@ var http = require('http').Server(app);
 
 var io = require('socket.io')(http);
 
+var randomstring = require("randomstring");
+
+var adminpass="aiwdicrhty";
+
 app.use(express.static('./views'));
 
 var Datastore = require('nedb');
@@ -16,11 +20,13 @@ gamedb = new Datastore({ filename: 'database/gamedb', autoload: true });
 gamedb.persistence.setAutocompactionInterval(10000);
 var activeusersnum= 0;
 var game = setInterval(function(){rungame()}, 50);
+var generateadminpass = setInterval(function(){makeadminpass()}, 60000);
 
 var setup = false;
 
 if(setup==false){
   console.log('setting up server options...');
+  makeadminpass();
   var time=(new Date).getTime();
   console.log(time);
   setup=true;
@@ -38,10 +44,22 @@ app.get('/', function (req, res) {
   res.render('index');
 })
 
+app.get("/"+adminpass+"rmusers", function (req, res) {
+  gamedb.remove({active:true}, function(err, numRemoved){
+    if(!err){
+      gamedb.remove({active:false}, function(err, numRemoved){
+      });
+    }    
+  });
+})
+
 io.on('connection', function(socket){
   socket.on('clientconnect', function(msg){
     console.log('user connected: ' + msg);
     socket.emit('clientinfo', activeusersnum);
+  });
+  socket.on('getping', function(msg){
+    socket.emit('setping', ((new Date).getTime()-msg)*2);
   });
   socket.on('quit', function(msg){
     gamedb.remove({username:msg}, function(err, numRemoved){
@@ -158,4 +176,12 @@ function checkcollide(obj1, obj2){
   }else{
     //no collision
   }
+}
+
+function makeadminpass(){
+  adminpass=randomstring.generate({
+    length: 50,
+    charset: 'alphabetic'
+  });
+  console.log("NEW ADMINPASS: "+adminpass);
 }
